@@ -23,6 +23,12 @@ class Api::V1::UsersController < ApplicationController
     end
 
 
+     # PUT /api/v1/users/:id
+    def update
+        @user.update(user_params)
+        head :no_content
+    end
+
 
     def user_params
         # whitelist params
