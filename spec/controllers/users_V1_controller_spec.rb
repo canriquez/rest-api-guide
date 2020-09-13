@@ -52,4 +52,36 @@ RSpec.describe 'users V1 API', type: :request do
     end
   end    
 
+
+    # Test suite for POST /api/v1/users
+    describe 'POST /api/v1/users' do
+        # valid payload
+        let(:valid_attributes) { { username: 'Learn Elm', password: 'lorem' } }
+    
+        context 'when the request is valid' do
+          before { post '/api/v1/users', params: valid_attributes }
+    
+          it 'creates a user' do
+            expect(json['username']).to eq('Learn Elm')
+            expect(json['password']).to eq('lorem')
+          end
+    
+          it 'returns status code 201' do
+            expect(response).to have_http_status(201)
+          end
+        end
+    
+        context 'when the request is invalid' do
+          before { post '/api/v1/users', params: { username: 'Foobar' } }
+    
+          it 'returns status code 422' do
+            expect(response).to have_http_status(422)
+          end
+    
+          it 'returns a validation failure message' do
+            expect(response.body)
+              .to match("{\"message\":\"Validation failed: Password can't be blank\"}")
+          end
+        end
+      end
 end
