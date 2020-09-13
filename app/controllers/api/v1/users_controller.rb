@@ -3,7 +3,7 @@ class Api::V1::UsersController < ApplicationController
     before_action :set_user, only: [:show, :update, :destroy]
 
 
-    #GET /users
+    #GET /api/V1/users
 
     def index
         @users = User.all 
@@ -11,7 +11,7 @@ class Api::V1::UsersController < ApplicationController
     end
     
 
-    # GET /user/:id
+    # GET /api/v1/user/:id
     def show
         json_response(@user)
     end
@@ -26,6 +26,13 @@ class Api::V1::UsersController < ApplicationController
      # PUT /api/v1/users/:id
     def update
         @user.update(user_params)
+        head :no_content
+    end
+
+
+    # DELETE /api/v1/users/:id
+    def destroy
+        @user.destroy
         head :no_content
     end
 

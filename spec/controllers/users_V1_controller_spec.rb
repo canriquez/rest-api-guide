@@ -102,4 +102,14 @@ RSpec.describe 'users V1 API', type: :request do
         end
     end
 
+
+    # Test suite for DELETE /api/v1/users/:id
+    describe 'DELETE /api/v1/users/:id' do
+        before { delete "/api/v1/users/#{user_id}" }
+
+        it 'returns status code 204' do
+        expect(response).to have_http_status(204)
+        end
+    end
+
 end
