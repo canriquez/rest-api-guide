@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       resources :users do
         resources :facts
       end
+      resources :books
     end
   end
 end
