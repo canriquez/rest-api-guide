@@ -4,25 +4,9 @@ RSpec.describe 'users V1 API', type: :request do
 
     #initialize test data
 
-    let!(:users) {create_list(:user, 10)}
-    let(:user_id) { users.first.id }
-
-    # Test suite for GET /users
-    describe 'GET /api/v1/users' do
-        # make HTTP get request before each example
-        before { get '/api/v1/users' }
-
-        it 'returns users' do
-        # Note `json` is a custom helper to parse JSON responses
-        expect(json).not_to be_empty
-        expect(json.size).to eq(10)
-        end
-
-        it 'returns status code 200' do
-        expect(response).to have_http_status(200)
-        end
-    end
-
+    let!(:users) {create_list(:user, 1)}
+    let!(:bot) { FactoryBot.create(:user, username: 'bot',  password: 'lorem') }
+    let!(:user_id) { bot.id }
 
   # Test suite for GET /api/v1/users/:id
   describe 'GET /api/v1/users/:id' do
@@ -56,22 +40,34 @@ RSpec.describe 'users V1 API', type: :request do
     # Test suite for POST /api/v1/users
     describe 'POST /api/v1/users' do
         # valid payload
-        let(:valid_attributes) { { username: 'Learn Elm', password: 'lorem' } }
-    
+        let(:valid_attributes) { { username: 'LearnElm1', password: 'lorem' } }    
         context 'when the request is valid' do
           before { post '/api/v1/users', params: valid_attributes }
     
           it 'creates a user' do
-            expect(json['username']).to eq('Learn Elm')
-            expect(json['password']).to eq('lorem')
+            expect(json['user']['username']).to eq('LearnElm1')
           end
     
-          it 'returns status code 201' do
-            expect(response).to have_http_status(201)
+          it 'returns status code 200' do
+            expect(response).to have_http_status(200)
+          end
+        end
+
+        context 'it should fail when user name is repeated' do
+          before { post '/api/v1/users', params: { username: 'bot', password: 'lorem' } }
+    
+          it 'returns status code 422' do
+            p response.body
+            expect(response).to have_http_status(422)
+          end
+    
+          it 'returns a validation failure message' do
+            expect(response.body)
+              .to match("{\"user\":{\"username\":[\"has already been taken\"]}}")
           end
         end
     
-        context 'when the request is invalid' do
+        context 'it should fail when password is missing' do
           before { post '/api/v1/users', params: { username: 'Foobar' } }
     
           it 'returns status code 422' do
@@ -80,25 +76,40 @@ RSpec.describe 'users V1 API', type: :request do
     
           it 'returns a validation failure message' do
             expect(response.body)
-              .to match("{\"message\":\"Validation failed: Password can't be blank\"}")
+              .to match("{\"user\":{\"password\":[\"can't be blank\"]}}")
           end
         end
       end
 
-    # Test suite for PUT /api/v1/users/:id
-    describe 'PUT /api/v1/users/:id' do
-        let(:valid_attributes) { { username: 'Shopping' } }
+    # Test suite for PATCH /api/v1/users/:id
+    describe 'PATCH /api/v1/users/:id' do
+        let(:valid_attributes) { { username: 'newbot', password: '123456' } }
+        let(:invalid_attributes) { { username: 'bot' } }
 
-        context 'when the record exists' do
-        before { put "/api/v1/users/#{user_id}", params: valid_attributes }
+        context 'when the record exists and valid attributes' do
+          before { patch "/api/v1/users/#{user_id}", params: valid_attributes }
 
-        it 'updates the record' do
-            expect(response.body).to be_empty
+          it 'updates user name' do
+            expect(json['user']['username']).to eq('newbot')
+          end
+
+          it 'returns status code 200' do
+              expect(response).to have_http_status(200)
+          end
+
         end
 
-        it 'returns status code 204' do
-            expect(response).to have_http_status(204)
-        end
+        context 'when the record exists and invalid attributes' do
+          before { patch "/api/v1/users/#{user_id}", params: invalid_attributes }
+
+          it 'fails to update the record' do
+            expect(response.body)
+            .to match("{\"password\":[\"can't be blank\"]}")
+          end
+
+          it 'returns status code 422' do
+              expect(response).to have_http_status(422)
+          end
         end
     end
 
@@ -107,7 +118,7 @@ RSpec.describe 'users V1 API', type: :request do
     describe 'DELETE /api/v1/users/:id' do
         before { delete "/api/v1/users/#{user_id}" }
 
-        it 'returns status code 204' do
+        it 'should destroy user' do
         expect(response).to have_http_status(204)
         end
     end
