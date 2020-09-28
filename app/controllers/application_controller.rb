@@ -3,7 +3,7 @@ class ApplicationController < ActionController::API
     include ExceptionHandler
 
 
-    before_action :authorized
+    #before_action :authorized
 
 
     def encode_token(payload)
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::API
 
 
     def authorized
-        render json: {message: 'Please log in to continue...'}, status: unauthorized unless logged_in?
+        render json: {message: 'Please log in to continue...'}, status: :unauthorized unless logged_in?
     end
 
 end

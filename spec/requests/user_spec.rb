@@ -1,3 +1,4 @@
+=begin 
 require 'rails_helper'
 
 # User information request: this should fail when not authorised
@@ -34,4 +35,5 @@ describe 'GET /api/v1/users/login' do
         p body.first
         expect(json_response.size).to eq(1)
       end
-end
+end 
+=end

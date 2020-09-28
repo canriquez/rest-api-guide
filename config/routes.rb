@@ -6,6 +6,7 @@ Rails.application.routes.draw do
           get "/auto_login", to: "users#auto_login"
           resources :facts
         resources :books
+        resources :tokens, only: [:create]
       end
     end
   end

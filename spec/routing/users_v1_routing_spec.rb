@@ -1,3 +1,4 @@
+=begin 
 require 'rails_helper'
 
 
@@ -15,3 +16,4 @@ RSpec.describe 'users V1 API', type: :routing do
     end
   end
 end
+=end
