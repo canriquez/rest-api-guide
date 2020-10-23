@@ -20,12 +20,12 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: devuser
+  username: pi3_api
   password: <%= ENV['APPNAME_DATABASE_PASSWORD'] %>
 
 development:
   <<: *default
-  database: rest_api_guide_development
+  database: DBPi3_development
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -82,6 +82,6 @@ test:
 #
 production:
   <<: *default
-  database: rest_api_guide_production
-  username: rest_api_guide
+  database: DBPi3_production
+  username: pi3_api
   password: <%= ENV['REST_API_GUIDE_DATABASE_PASSWORD'] %>
