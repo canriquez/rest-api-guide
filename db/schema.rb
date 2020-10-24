@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_15_204604) do
+ActiveRecord::Schema.define(version: 2020_10_24_104115) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,21 @@ ActiveRecord::Schema.define(version: 2020_09_15_204604) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "ejecucions", force: :cascade do |t|
+    t.bigint "orden_id", null: false
+    t.integer "ciclo"
+    t.string "rutina"
+    t.string "descripcion"
+    t.integer "etarget"
+    t.string "unidad"
+    t.string "lectura"
+    t.string "estado"
+    t.string "obs"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["orden_id"], name: "index_ejecucions_on_orden_id"
+  end
+
   create_table "facts", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "fact"
@@ -30,6 +45,15 @@ ActiveRecord::Schema.define(version: 2020_09_15_204604) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_facts_on_user_id"
+  end
+
+  create_table "ordens", force: :cascade do |t|
+    t.string "creator"
+    t.string "mezcla"
+    t.string "target"
+    t.string "obs"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -40,5 +64,6 @@ ActiveRecord::Schema.define(version: 2020_09_15_204604) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "ejecucions", "ordens"
   add_foreign_key "facts", "users"
 end
